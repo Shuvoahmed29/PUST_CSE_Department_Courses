@@ -6,53 +6,52 @@ void code(){
     freopen("output.txt", "w", stdout);
     #endif 
 }
-int cost = 0,graph[4][4],visited[4];
-int cunt=0;
-int p=0;
-vector<int>vec,v1;
-void takeInput(){
-    for(int i=1;i<=4;i++){
-        for(int j=1;j<=4;j++)
-            cin >> graph[i][j];
-    }
+#define v 4
+int TSP(int graph[v][v],int src,vector<int>&vec){
+	vector<int>vertex,ans;
+	for(int i=0;i<v;i++){
+		if(i != src) vertex.push_back(i);
+	}
+	int min_path = INT_MAX;
+	do{
+		int current_wight = 0;
+		int k = src;
+		ans.push_back(src);
+		for(int i=0;i<vertex.size();i++){
+			current_wight += graph[k][vertex[i]];
+			k = vertex[i];
+			ans.push_back(k);
+		}
+		current_wight += graph[k][src];
+		ans.push_back(src);
+		if(min_path>current_wight){
+			min_path = min(min_path,current_wight);
+			vec = ans;
+			ans.clear();
+		}
+		else ans.clear();
+	}while(next_permutation(vertex.begin(),vertex.end()));
+	
+	return min_path;
 }
-int find_next_node(int node){
-    int nd,Min = INT_MAX,min_index,democost,i;
-    for(i=1;i<=4;i++){
-        if(visited[i]==0 && graph[node][i]!=0 && graph[node][i]<Min){
-            democost = graph[node][i];
-            Min = graph[node][i];
-            min_index = i;
-        }
-    }
-    nd = min_index;
-    cost += democost;
-    return nd;
+int main(){
+	code();
+	int graph[v][v];
+	for(int i=0;i<v;i++){
+		for(int j=0;j<v;j++)
+			cin >> graph[i][j];
+	}
+	int src=0;
+	vector<int>vec;
+	int cost = TSP(graph,src,vec);
+	cout << "Minimum Path is:\n";
+	for(auto it:vec){
+		cout << it+1 << " ";
+	}
+	cout << "\nTotal Cost: " << cost << endl;
 }
-void TSP(int node){
-    int next_node;
-    visited[node] = 1;
-    cout << node << " ";
-    v1.push_back(cost);
-    vec.push_back(node);
-    next_node = find_next_node(node);
-    if(vec.size()==4){
-        cout << 1 << endl;
-        p = graph[1][vec[vec.size()-1]];
-        return;
-    }
-    TSP(next_node);
-    cout << "\nTotal Cost: " << v1[v1.size()-1]+p << endl;
-}
-int32_t main(){
-    code();
-    takeInput();
-    for(int i=1;i<=4;i++) visited[i] = 0;
-    int start; cin >> start;
-    cout << "TSP path: ";
-    TSP(start);
 
-}
+
 /*
 0 4 1 3
 4 0 2 1
@@ -65,4 +64,10 @@ cost: 7(1-3-2-4-1)
 5 2 0 3
 4 2 3 0
 Cost:10(1-4-3-2-1)
+
+0 1 2 1
+1 0 2 3
+2 2 0 3
+1 3 3 0
+Cost: 7(1-2-3-4-1)
 */
